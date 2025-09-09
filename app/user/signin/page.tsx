@@ -66,7 +66,7 @@ export default function SigninPage() {
           <input
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder="Roll No"
             value={form.email}
             onChange={handleChange}
             className="w-full p-2 outline-none text-gray-700 placeholder-gray-400"
