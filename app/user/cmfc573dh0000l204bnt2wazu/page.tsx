@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { User, Mail, Lock, Shield, Building2 } from "lucide-react";
+import { User, Mail, Lock, Shield, Building2, Eye, EyeOff } from "lucide-react";
 
 export default function SignupPage() {
+  const router = useRouter();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -13,11 +16,19 @@ export default function SignupPage() {
     department: "",
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Force lowercase for email
+    if (name === "email") {
+      setForm({ ...form, [name]: value.toLowerCase() });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,6 +53,9 @@ export default function SignupPage() {
         role: "STUDENT",
         department: "",
       });
+
+      // Redirect to signin page
+      router.push("/user/signin");
     } catch (err: any) {
       toast.error("❌ " + err.message);
     } finally {
@@ -90,11 +104,11 @@ export default function SignupPage() {
           />
         </div>
 
-        {/* Password */}
+        {/* Password with Show/Hide */}
         <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-purple-400 transition">
           <Lock className="w-5 h-5 text-purple-500 mr-2" />
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="password"
             placeholder="Password"
             value={form.password}
@@ -102,6 +116,13 @@ export default function SignupPage() {
             className="w-full p-2 outline-none text-gray-700 placeholder-gray-400"
             required
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="ml-2 text-gray-500 hover:text-purple-600"
+          >
+            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          </button>
         </div>
 
         {/* Department */}
@@ -122,7 +143,6 @@ export default function SignupPage() {
             <option value="CIVIL">CIVIL</option>
           </select>
         </div>
-
 
         {/* Role */}
         <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-purple-400 transition">
